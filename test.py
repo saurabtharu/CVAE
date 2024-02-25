@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 model = CVAE(img_size=IMAGE_SIZE).to(DEVICE)
 
 # Load the state_dict
-state_dict = torch.load("./models/model_1.pth")
+state_dict = torch.load("./models/model.pth", map_location=torch.device("cpu"))
 
 # If the model was trained using DataParallel, you need to remove the 'module.' prefix
 # from all keys in the state_dict
