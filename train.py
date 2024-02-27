@@ -49,7 +49,7 @@ def train_step(
     clean_train_dataloader: DataLoader,
     noisy_train_dataloader: DataLoader,
     optimizer: torch.optim.Optimizer,
-    device: torch.device,
+    device: torch.device = torch.device(DEVICE),
     loss_fn=loss_function,
 ):
     loss_history = []
@@ -63,7 +63,7 @@ def train_step(
     for (clean_img, _), (noisy_img, _) in zip(
         clean_train_dataloader, noisy_train_dataloader
     ):
-        clean_img, noisy_img = clean_img.to(DEVICE), noisy_img.to(DEVICE)
+        clean_img, noisy_img = clean_img.to(device), noisy_img.to(device)
 
         # 2. forward pass
         recon_img, mu, logVar = model(noisy_img)

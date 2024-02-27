@@ -135,6 +135,6 @@ def create_blurry_dataloader(dataset, blur_radius, batch_size=config.BATCH_SIZE)
     return loader
 
 
-celeb_blurry_val_dataloader = create_blurry_dataloader(
+create_blurry_dataloader(
     dataset=celeb_val_dataloader, blur_radius=20, batch_size=config.BATCH_SIZE
 )
