@@ -1,1 +1,5 @@
 .mypy_cache/
+models/
+cvae/
+.ipynb_checkpoints/
+__pycache__/
