@@ -7,6 +7,7 @@ import config
 import dataloader
 from CVAE import CVAE
 import train
+from generate_loss import plot_loss
 
 """
 
@@ -38,23 +39,6 @@ def main():
     optimizer = optim.Adam(model.parameters(), lr=config.LR)
     # scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
 
-    """
-
-def train_model(
-    model,
-    clean_train_dataloader,
-    noisy_train_dataloader,
-    clean_val_dataloader,
-    noisy_val_dataloader,
-    epochs,
-    optimizer,
-    state_dict_file=None,
-):
-
-
-
-    """
-
     # def train_model(model, epochs, optimizer, state_dict_file=none):
     model_cvae_v2_result = train.train_model(
         model=model,
@@ -66,16 +50,13 @@ def train_model(
         optimizer=optimizer,
         #                                    state_dict_file="./models/cvae_v1/model_6epoch_trained.pth"
     )
-    print(model_cvae_v2_result)
 
-    ## training of model
-    train.train_func(
-        model=model,
-        epochs=config.EPOCHS,
-        optimizer=optimizer,
-        train_dataloader=dataloader.celeb_train_dataloader,
-        noisy_train_dataloader=dataloader.celeb_noisy_train_dataloader,
-    )
+    print(json.dumps(model_cvae_v2_result, indent=4))
+    with open("./loss.json", "w") as file:
+        json.dump(model_cvae_v2_result, file)
+
+    # Plotting the loss values
+    plot_loss(model_cvae_v2_result, config.EPOCHS)
 
     # Saving model
     model_state_dict = model.state_dict()

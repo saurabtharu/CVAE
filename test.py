@@ -4,7 +4,7 @@ from PIL import Image
 from torchvision.transforms import transforms
 
 from config import DEVICE, IMAGE_SIZE
-from CVAE import CVAE, CVAE_v1
+from CVAE import CVAE_v4, CVAE_dropout
 from dataloader import celeb_val_dataloader, celeb_noisy_val_dataloader, transform
 
 
@@ -22,7 +22,7 @@ def load_model(model_path, model_arch):
     return model
 
 
-model = load_model("./models/model_1_200e_new.pth", CVAE)
+model = load_model("./models/best_model.pth", CVAE_v4)
 
 
 noisy_image_path = "./test_image/noisy_image.jpg"
@@ -34,21 +34,20 @@ original_image = Image.open(original_image_path)
 
 
 # Convert images to tensors and move to device
-# noisy_image = transform(noisy_image).unsqueeze(0).to(DEVICE)
-# original_image = transform(original_image).unsqueeze(0).to(DEVICE)
-# model.eval()
-# with torch.inference_mode():
-#     reconstructed_image, _, _ = model(noisy_image.squeeze(0).to(device))
-
-
-index = 32
-original_image = celeb_val_dataloader.dataset[index][0]
-noisy_image = celeb_noisy_val_dataloader.dataset[index][0]
-
+noisy_image = transform(noisy_image).unsqueeze(0).to(DEVICE)
+original_image = transform(original_image).unsqueeze(0).to(DEVICE)
 model.eval()
 with torch.inference_mode():
-    reconstructed_image, _, _ = model(noisy_image.to(DEVICE))
+    reconstructed_image, _, _ = model(noisy_image.squeeze(0).to(DEVICE))
 
+# index = 32
+# original_image = celeb_val_dataloader.dataset[index][0]
+# noisy_image = celeb_noisy_val_dataloader.dataset[index][0]
+#
+# model.eval()
+# with torch.inference_mode():
+#     reconstructed_image, _, _ = model(noisy_image.to(DEVICE))
+#
 
 plt.subplot(1, 3, 1)
 plt.imshow(original_image.squeeze().permute(1, 2, 0))
@@ -66,4 +65,4 @@ plt.imshow(reconstructed_image.squeeze().cpu().permute(1, 2, 0))
 plt.title("Reconstructed")
 plt.axis("off")
 
-plt.show()
+plt., CVAE_dropout

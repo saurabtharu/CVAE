@@ -3,3 +3,7 @@ models/
 cvae/
 .ipynb_checkpoints/
 __pycache__/
+new.json
+some.csv
+some.md
+loss_values.py
