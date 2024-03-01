@@ -99,7 +99,7 @@ class CVAE_dropout(nn.Module):
         if self.training:
             std = torch.exp(0.5 * logvar)       # computing the standard deviation from the log
             eps = torch.randn_like(std)         # Sample noise from a standard normal distribution
-            return eps.mul(std).add_(mu)
+            return eps.mul(std).add_(mu)        # z : reparmeterizing latent variable using the sampled noise, mean, and standard deviation.
         else:
             return mu
 

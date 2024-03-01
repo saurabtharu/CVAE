@@ -19,12 +19,16 @@ def train_step(
     num = 1
     average_loss = 0.0
 
-    # 1. model
+    # 1. model train
     model.train()
     total_loss = 0.0
     for (clean_img, _), (noisy_img, _) in zip(
         clean_train_dataloader, noisy_train_dataloader
     ):
+        """
+        clean_train_dataloader :   (image, label)
+        noisy_train_dataloader :   (image, label)
+        """
         clean_img, noisy_img = clean_img.to(device), noisy_img.to(device)
 
         # 2. forward pass
@@ -38,16 +42,16 @@ def train_step(
         loss = loss_fn(recon_img=recon_img, input_img=clean_img, mu=mu, logvar=logVar)
 
         # 4. optimizer zero grad
-        optimizer.zero_grad()
+        optimizer.zero_grad()       # zero out the previously accumulated gradients
 
         # 5. loss backward
-        loss.backward()
+        loss.backward()         # accumulate the gradients 
 
         ### accumulating the training loss
         train_loss += loss.item()
 
         # 6. optimizer step
-        optimizer.step()
+        optimizer.step()               # update weight and biases 
 
         average_loss = total_loss / len(clean_train_dataloader.dataset)
     train_loss = train_loss / len(clean_train_dataloader.dataset)
@@ -60,8 +64,8 @@ def test_step(
     model: torch.nn.Module,
     clean_test_dataloader: torch.utils.data.DataLoader,
     noisy_test_dataloader: torch.utils.data.DataLoader,
-    loss_fn,
     device: torch.device,
+    loss_fn = loss_function
 ):
     ### TESTING
     test_loss = 0
@@ -139,7 +143,7 @@ def train(
             optimizer=optimizer,
             device=device,
         )
-        if (epoch + 1) % 20 == 0 and epoch != 0:
+        if (epoch + 1) % 50 == 0 and epoch != 0:
             model_state_dict = model.state_dict()
             save_path = (
                 f"./models/{model.__class__.__name__}/model_{epoch}epoch_trained.pth"
@@ -158,9 +162,6 @@ def train(
             loss_fn=loss_fn,
             device=device,
         )
-
-        # Update learning rate
-        #         scheduler.step()
 
         # Save the model if the validation loss is improved
         if test_loss < best_val_loss:
@@ -211,18 +212,14 @@ def train_model(
     if state_dict_file:
         print(f"{state_dict_file} present!!!")
         state_dict = torch.load(state_dict_file)
+
         # If the model was trained using DataParallel, you need to remove the 'module.' prefix
         # from all keys in the state_dict
         if next(iter(state_dict.keys())).startswith("module"):
             state_dict = {key[7:]: value for key, value in state_dict.items()}
 
-            # Load the state_dict into the model
-            model.load_state_dict(state_dict)
-
-    #     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
-    # scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-    #     optimizer, mode="min", factor=0.1, patience=PATIENCE, verbose=True
-    # )
+        # Load the state_dict into the model
+        model.load_state_dict(state_dict)
 
     model_loss_results = train(
         model=model,
