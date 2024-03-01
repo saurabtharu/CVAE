@@ -5,7 +5,7 @@ import json
 
 import config
 import dataloader
-from CVAE import CVAE
+from CVAE import CVAE as CVAE
 import train
 from generate_loss import plot_loss
 
@@ -25,16 +25,16 @@ model_cvae_v2_result = train_model(model=model_cvae_v2,
 
 
 def main():
-    # set random seeds
+    # set random seeds 
+    # is done for code reproducibility 
     torch.manual_seed(42)
     torch.cuda.manual_seed(42)
 
     model = CVAE(img_size=config.IMAGE_SIZE).to(config.DEVICE)
-    state_dict = torch.load( "./models/model_1_200e.pth", map_location=torch.device(config.DEVICE)) 
-    model.load_state_dict(state_dict)
+    # state_dict = torch.load( "./models/model_1_200e.pth", map_location=torch.device(config.DEVICE)) 
+    # model.load_state_dict(state_dict)
 
     optimizer = optim.Adam(model.parameters(), lr=config.LR)
-    # scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
 
     # def train_model(model, epochs, optimizer, state_dict_file=none):
     model_cvae_result = train.train_model(

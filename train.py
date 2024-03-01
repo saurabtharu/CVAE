@@ -45,7 +45,7 @@ def train_step(
         optimizer.zero_grad()       # zero out the previously accumulated gradients
 
         # 5. loss backward
-        loss.backward()         # accumulate the gradients 
+        loss.backward()             # accumulate the gradients 
 
         ### accumulating the training loss
         train_loss += loss.item()
