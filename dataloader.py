@@ -2,11 +2,10 @@ import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, random_split, Dataset
 import cv2
-
-
 import config
 
 
+### Creating custom dataset 
 class NoisyDataset(Dataset):
     def __init__(self, dataset, noise_std):
         self.dataset = dataset
@@ -26,37 +25,11 @@ class NoisyDataset(Dataset):
 
         return noisy_image, label
 
-
-class BlurryDataset(Dataset):
-    def __init__(self, dataset, blur_radius):
-        self.dataset = dataset
-        self.blur_radius = blur_radius
-
-    def __len__(self):
-        return len(self.dataset)
-
-    def __getitem__(self, index):
-        image, label = self.dataset[index]
-
-        # Convert PIL image to numpy array
-        image_np = transforms.ToPILImage()(image)
-        image_np = np.array(image_np)
-
-        # Apply blur using cv2.blur
-        blurry_image = cv2.blur(image_np, (self.blur_radius, self.blur_radius))
-
-        # Convert numpy array back to tensor
-        blurry_image = transforms.ToTensor()(blurry_image)
-
-        return blurry_image, label
-
-
 # Define transformation to be applied to the images
 transform = transforms.Compose(
     [
         transforms.Resize((config.IMAGE_SIZE, config.IMAGE_SIZE)),  # Resize to 256x256
         transforms.ToTensor(),  # Convert to tensor
-        #     transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])  # Normalize
     ]
 )
 
@@ -119,6 +92,31 @@ celeb_noisy_val_dataloader = create_noisy_dataloader(
 )
 
 
+"""
+class BlurryDataset(Dataset):
+    def __init__(self, dataset, blur_radius):
+        self.dataset = dataset
+        self.blur_radius = blur_radius
+
+    def __len__(self):
+        return len(self.dataset)
+
+    def __getitem__(self, index):
+        image, label = self.dataset[index]
+
+        # Convert PIL image to numpy array
+        image_np = transforms.ToPILImage()(image)
+        image_np = np.array(image_np)
+
+        # Apply blur using cv2.blur
+        blurry_image = cv2.blur(image_np, (self.blur_radius, self.blur_radius))
+
+        # Convert numpy array back to tensor
+        blurry_image = transforms.ToTensor()(blurry_image)
+
+        return blurry_image, label
+
+
 def create_blurry_dataloader(dataset, blur_radius, batch_size=config.BATCH_SIZE):
     # Create noisy dataset
     blurry_dataset = BlurryDataset(dataset=dataset, blur_radius=blur_radius)
@@ -135,6 +133,7 @@ def create_blurry_dataloader(dataset, blur_radius, batch_size=config.BATCH_SIZE)
     return loader
 
 
-create_blurry_dataloader(
-    dataset=celeb_val_dataloader, blur_radius=20, batch_size=config.BATCH_SIZE
-)
+# create_blurry_dataloader(
+#     dataset=celeb_val_dataloader, blur_radius=20, batch_size=config.BATCH_SIZE
+# )
+"""

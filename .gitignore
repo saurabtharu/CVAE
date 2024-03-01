@@ -7,3 +7,10 @@ new.json
 some.csv
 some.md
 loss_values.py
+torchexplorer_standalone/
+test_image/
+kaggle.md
+dataset_new.zip
+new model dropout/
+plot_neural.py
+test_generate_diagram.py
